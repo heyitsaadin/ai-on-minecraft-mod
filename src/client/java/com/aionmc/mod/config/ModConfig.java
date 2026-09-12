@@ -26,7 +26,7 @@ public class ModConfig {
 
     public String customModel = "gpt-4o-mini";
 
-    public String freeProxyUrl = "https://ai-on-minecraft-proxy.example.com/chat";
+    public String freeProxyUrl = "https://ai-on-minecraft-proxy.onrender.com/chat";
 
     public boolean reactToAdvancements = true;
 
