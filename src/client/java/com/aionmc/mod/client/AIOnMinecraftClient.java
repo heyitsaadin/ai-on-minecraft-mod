@@ -31,6 +31,23 @@ public class AIOnMinecraftClient implements ClientModInitializer {
 
         eventWatcher.register();
         registerChatHook();
+        registerConfigCommand();
+    }
+
+    /**
+     * "/aion config" opens the settings screen. We're not depending on Mod
+     * Menu here (its exact Minecraft 26.2 version wasn't something we could
+     * pin with confidence), so a plain client command is the simple,
+     * dependency-free way to open it in-game.
+     */
+    private void registerConfigCommand() {
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) ->
+                dispatcher.register(ClientCommandManager.literal("aion")
+                        .then(ClientCommandManager.literal("config")
+                                .executes(context -> {
+                                    ConfigScreenFactory.open(config);
+                                    return 1;
+                                }))));
     }
 
     private void registerChatHook() {
