@@ -86,7 +86,7 @@ public class GameEventWatcher {
     }
 
     private String idOf(EntityType<?> type) {
-        ResourceLocation key = BuiltInRegistries.ENTITY_TYPE.getKey(type);
+        Identifier key = BuiltInRegistries.ENTITY_TYPE.getKey(type);
         return key == null ? "" : key.toString();
     }
 
