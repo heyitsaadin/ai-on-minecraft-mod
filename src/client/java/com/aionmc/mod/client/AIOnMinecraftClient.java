@@ -49,12 +49,11 @@ public class AIOnMinecraftClient implements ClientModInitializer {
         aiClient.requestReply(snapshot).thenAccept(reply -> {
             memory.addAssistantMessage(reply);
 
-            MinecraftClient.getInstance().execute(() -> {
-                MinecraftClient client = MinecraftClient.getInstance();
+            Minecraft.getInstance().execute(() -> {
+                Minecraft client = Minecraft.getInstance();
                 if (client.player != null) {
-                    client.player.sendMessage(
-                            Text.literal("<AI> " + reply),
-                            false
+                    client.player.sendSystemMessage(
+                            Component.literal("<AI> " + reply)
                     );
                 }
             });
