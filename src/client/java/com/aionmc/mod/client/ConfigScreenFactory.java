@@ -112,7 +112,7 @@ public final class ConfigScreenFactory {
                         .setSaveConsumer(value -> config.reactToNotableKills = value)
                         .build());
 
-        client.setScreen(builder.build());
+        client.gui.setScreen(builder.build());
     }
 
     private static String providerDisplayName(ModConfig.Provider provider) {
