@@ -5,6 +5,8 @@ import com.aionmc.mod.memory.ChatMemory;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -15,11 +17,19 @@ import java.util.function.Consumer;
 
 public class GameEventWatcher {
 
-    private static final Set<EntityType<?>> NOTABLE_MOBS = new HashSet<>(Set.of(
-            EntityType.ENDER_DRAGON,
-            EntityType.WITHER,
-            EntityType.WARDEN,
-            EntityType.ELDER_GUARDIAN
+    /**
+     * Notable-mob ids as strings rather than EntityType.XYZ static constants.
+     * The static constants on EntityType weren't resolving against this
+     * build's Minecraft 26.2 setup (Fabric Loom's non-remapping mode for
+     * 26.x doesn't expose them the way older, remapped versions did), so we
+     * look the type up by its stable resource-location id instead, which
+     * works the same way across mapping/remapping configurations.
+     */
+    private static final Set<String> NOTABLE_MOB_IDS = new HashSet<>(Set.of(
+            "minecraft:ender_dragon",
+            "minecraft:wither",
+            "minecraft:warden",
+            "minecraft:elder_guardian"
     ));
 
     private final ChatMemory memory;
@@ -68,18 +78,26 @@ public class GameEventWatcher {
         if (client.player == null || killer != client.player) return;
 
         EntityType<?> type = killed.getType();
-        if (NOTABLE_MOBS.contains(type)) {
-            String name = describeNotableKill(type);
+        String id = idOf(type);
+        if (NOTABLE_MOB_IDS.contains(id)) {
+            String name = describeNotableKill(id);
             onAmbientEvent.accept("The player just defeated " + name + "!");
         }
     }
 
-    private String describeNotableKill(EntityType<?> type) {
-        if (type == EntityType.ENDER_DRAGON) return "the Ender Dragon";
-        if (type == EntityType.WITHER) return "the Wither";
-        if (type == EntityType.WARDEN) return "a Warden";
-        if (type == EntityType.ELDER_GUARDIAN) return "an Elder Guardian";
-        return type.toString();
+    private String idOf(EntityType<?> type) {
+        ResourceLocation key = BuiltInRegistries.ENTITY_TYPE.getKey(type);
+        return key == null ? "" : key.toString();
+    }
+
+    private String describeNotableKill(String id) {
+        return switch (id) {
+            case "minecraft:ender_dragon" -> "the Ender Dragon";
+            case "minecraft:wither" -> "the Wither";
+            case "minecraft:warden" -> "a Warden";
+            case "minecraft:elder_guardian" -> "an Elder Guardian";
+            default -> id;
+        };
     }
 
     public void onAdvancementEarned(String advancementTitle) {
