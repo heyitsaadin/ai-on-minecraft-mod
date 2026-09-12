@@ -31,8 +31,12 @@ public final class ConfigScreenFactory {
 
     public static void open(ModConfig config) {
         Minecraft client = Minecraft.getInstance();
-        // In 26.2, screen get/set moved off Minecraft onto its Gui object.
-        Screen parent = client.gui.getScreen();
+        // We don't have a confirmed way to read the currently-open screen
+        // back from Gui in 26.2 (getScreen() isn't the right name here),
+        // and we don't strictly need it: this is always opened fresh via
+        // the /aion config command, not from within another screen, so a
+        // null parent is fine — "Done" will just close back to the game.
+        Screen parent = null;
 
         ConfigBuilder builder = ConfigBuilder.create()
                 .setParentScreen(parent)
