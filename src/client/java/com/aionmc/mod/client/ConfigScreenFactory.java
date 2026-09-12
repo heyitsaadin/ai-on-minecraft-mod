@@ -31,7 +31,8 @@ public final class ConfigScreenFactory {
 
     public static void open(ModConfig config) {
         Minecraft client = Minecraft.getInstance();
-        Screen parent = client.screen;
+        // In 26.2, screen get/set moved off Minecraft onto its Gui object.
+        Screen parent = client.gui.getScreen();
 
         ConfigBuilder builder = ConfigBuilder.create()
                 .setParentScreen(parent)
