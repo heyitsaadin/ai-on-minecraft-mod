@@ -1,0 +1,37 @@
+{
+	"schemaVersion": 1,
+	"id": "aionminecraft",
+	"version": "${version}",
+	"name": "AI on Minecraft",
+	"description": "Talk to an AI companion right in chat \u2014 no commands needed. It remembers recent conversation and reacts to advancements, low health, and notable mob kills.",
+	"authors": [
+		"heyitsaadin"
+	],
+	"contact": {
+		"homepage": "https://modrinth.com/mod/ai-on-minecraft"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/aionminecraft/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"main": [
+			"com.aionmc.mod.AIOnMinecraft"
+		],
+		"client": [
+			"com.aionmc.mod.client.AIOnMinecraftClient"
+		]
+	},
+	"mixins": [
+		"aionminecraft.mixins.json",
+		{
+			"config": "aionminecraft.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.19.5",
+		"minecraft": "~26.2",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}
