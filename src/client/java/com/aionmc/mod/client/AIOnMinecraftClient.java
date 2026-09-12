@@ -5,6 +5,8 @@ import com.aionmc.mod.config.ModConfig;
 import com.aionmc.mod.event.GameEventWatcher;
 import com.aionmc.mod.memory.ChatMemory;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.message.v1.ClientSendMessageEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.ChatFormatting;
