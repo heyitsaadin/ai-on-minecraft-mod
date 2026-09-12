@@ -20,9 +20,10 @@ import net.minecraft.network.chat.Component;
  * clear in-chat error rather than silently falling back, so the player
  * always knows which mode they're actually in.
  *
- * Reachable three ways: the "/aion config" chat command, the in-game
- * keybinding (see ConfigKeyBinding), and — if Mod Menu is installed — the
- * settings gear icon in the mods list (see ModMenuIntegration).
+ * Reachable two ways: the "/aion config" chat command, and the in-game
+ * keybinding (see ConfigKeyBinding). Not currently wired into Mod Menu —
+ * that integration was pulled pending a verified Mod Menu build for
+ * Minecraft 26.2 (see project notes/history for why).
  */
 public final class ConfigScreenFactory {
 

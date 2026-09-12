@@ -19,9 +19,6 @@
 		],
 		"client": [
 			"com.aionmc.mod.client.AIOnMinecraftClient"
-		],
-		"modmenu": [
-			"com.aionmc.mod.client.ModMenuIntegration"
 		]
 	},
 	"mixins": [
@@ -36,8 +33,5 @@
 		"minecraft": "~26.2",
 		"java": ">=25",
 		"fabric-api": "*"
-	},
-	"suggests": {
-		"modmenu": "*"
 	}
 }
