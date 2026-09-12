@@ -74,8 +74,12 @@ public class AIOnMinecraftClient implements ClientModInitializer {
             Minecraft.getInstance().execute(() -> {
                 Minecraft client = Minecraft.getInstance();
                 if (client.player != null) {
-                    Component tag = Component.literal("<ChatGpt> ").withStyle(ChatFormatting.BLUE);
-                    Component message = tag.copy().append(Component.literal(reply));
+                    // A lighter, brighter blue than the built-in ChatFormatting.BLUE
+                    // (which renders quite dark/navy). Reply body stays plain white.
+                    Style lightBlue = Style.EMPTY.withColor(TextColor.fromRgb(0x55AAFF));
+                    Component tag = Component.literal("<ChatGpt> ").withStyle(lightBlue);
+                    Component body = Component.literal(reply).withStyle(ChatFormatting.WHITE);
+                    Component message = tag.copy().append(body);
                     client.player.sendSystemMessage(message);
                 }
             });
