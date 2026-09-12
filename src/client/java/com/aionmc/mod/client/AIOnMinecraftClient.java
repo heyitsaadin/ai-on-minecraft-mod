@@ -42,8 +42,8 @@ public class AIOnMinecraftClient implements ClientModInitializer {
      */
     private void registerConfigCommand() {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) ->
-                dispatcher.register(ClientCommandManager.literal("aion")
-                        .then(ClientCommandManager.literal("config")
+                dispatcher.register(ClientCommands.literal("aion")
+                        .then(ClientCommands.literal("config")
                                 .executes(context -> {
                                     ConfigScreenFactory.open(config);
                                     return 1;
