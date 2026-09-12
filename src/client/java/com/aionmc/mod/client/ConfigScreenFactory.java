@@ -20,27 +20,34 @@ import net.minecraft.network.chat.Component;
  * clear in-chat error rather than silently falling back, so the player
  * always knows which mode they're actually in.
  *
- * Opened via the "/aion config" command (see AIOnMinecraftClient) rather
- * than through Mod Menu, since Mod Menu's Minecraft 26.2 build wasn't
- * something this could pin a verified version for.
+ * Reachable three ways: the "/aion config" chat command, the in-game
+ * keybinding (see ConfigKeyBinding), and — if Mod Menu is installed — the
+ * settings gear icon in the mods list (see ModMenuIntegration).
  */
 public final class ConfigScreenFactory {
 
     private ConfigScreenFactory() {
     }
 
+    /**
+     * Opens the screen directly (used by the "/aion config" command and the
+     * in-game keybinding). There's no sensible parent screen in either case
+     * — both are triggered from gameplay, not from within another screen —
+     * so "Done" closes back to the game.
+     */
     public static void open(ModConfig config) {
-        Minecraft client = Minecraft.getInstance();
-        // We don't have a confirmed way to read the currently-open screen
-        // back from Gui in 26.2 (getScreen() isn't the right name here),
-        // and we don't strictly need it: this is always opened fresh via
-        // the /aion config command, not from within another screen, so a
-        // null parent is fine — "Done" will just close back to the game.
-        Screen parent = null;
+        Minecraft.getInstance().gui.setScreen(build(config, null));
+    }
 
+    /**
+     * Builds (but does not display) the settings screen with the given
+     * parent, so a caller like Mod Menu can display it and handle "Done"
+     * navigating back to its own mods list instead of to gameplay.
+     */
+    public static Screen build(ModConfig config, Screen parent) {
         ConfigBuilder builder = ConfigBuilder.create()
                 .setParentScreen(parent)
-                .setTitle(Component.literal("AI on Minecraft"))
+                .setTitle(Component.literal("Chat With Chatgpt"))
                 .setSavingRunnable(() -> config.save(FabricLoader.getInstance().getConfigDir()));
 
         ConfigEntryBuilder entryBuilder = builder.entryBuilder();
@@ -116,7 +123,7 @@ public final class ConfigScreenFactory {
                         .setSaveConsumer(value -> config.reactToNotableKills = value)
                         .build());
 
-        client.gui.setScreen(builder.build());
+        return builder.build();
     }
 
     private static String providerDisplayName(ModConfig.Provider provider) {

@@ -8,6 +8,17 @@ repositories {
 		name = "shedaniel"
 		url = "https://maven.shedaniel.me/"
 	}
+	exclusiveContent {
+		forRepository {
+			maven {
+				name = "Modrinth"
+				url = "https://api.modrinth.com/maven"
+			}
+		}
+		filter {
+			includeGroup "maven.modrinth"
+		}
+	}
 }
 
 loom {
@@ -33,6 +44,17 @@ dependencies {
 	implementation("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
 		exclude(group: "net.fabricmc.fabric-api")
 	}
+
+	// Mod Menu, OPTIONAL: only used to show a settings gear icon in the mods
+	// list. modCompileOnly means we compile against its API but don't bundle
+	// it or require it at runtime — see ModMenuIntegration.java and the
+	// "modmenu" entrypoint + "suggests" entry in fabric.mod.json for how the
+	// soft dependency is wired up. The version below is a PLACEHOLDER: check
+	// https://modrinth.com/mod/modmenu/versions for the current build that
+	// targets Minecraft 26.2 and update modmenu_version in gradle.properties
+	// (and modmenu_maven_version_id with the matching Version ID from that
+	// page) before building.
+	modCompileOnly "maven.modrinth:mOgUt4GM:${project.modmenu_maven_version_id}"
 }
 
 processResources {

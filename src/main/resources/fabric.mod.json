@@ -2,8 +2,8 @@
 	"schemaVersion": 1,
 	"id": "aionminecraft",
 	"version": "${version}",
-	"name": "AI on Minecraft",
-	"description": "Talk to an AI companion right in chat \u2014 no commands needed. It remembers recent conversation and reacts to advancements, low health, and notable mob kills.",
+	"name": "Chat With Chatgpt",
+	"description": "This is A developing Mod that lets u connect a AI provider like Chat-Gpt to talk to an AI companion right in chat \u2014 no commands needed. It remembers recent conversation and reacts to advancements, low health, and notable mob kills.",
 	"authors": [
 		"heyitsaadin"
 	],
@@ -19,6 +19,9 @@
 		],
 		"client": [
 			"com.aionmc.mod.client.AIOnMinecraftClient"
+		],
+		"modmenu": [
+			"com.aionmc.mod.client.ModMenuIntegration"
 		]
 	},
 	"mixins": [
@@ -33,5 +36,8 @@
 		"minecraft": "~26.2",
 		"java": ">=25",
 		"fabric-api": "*"
+	},
+	"suggests": {
+		"modmenu": "*"
 	}
 }

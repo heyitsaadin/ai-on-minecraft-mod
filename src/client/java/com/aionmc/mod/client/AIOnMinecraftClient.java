@@ -34,6 +34,7 @@ public class AIOnMinecraftClient implements ClientModInitializer {
         eventWatcher.register();
         registerChatHook();
         registerConfigCommand();
+        ConfigKeyBinding.register(config);
     }
 
     /**
