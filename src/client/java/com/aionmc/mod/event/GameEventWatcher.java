@@ -63,7 +63,7 @@ public class GameEventWatcher {
         wasLowHealth = isLowNow;
     }
 
-    public void onEntityKilled(LivingEntity killed, Entity killer, MinecraftClient client) {
+    public void onEntityKilled(LivingEntity killed, Entity killer, Minecraft client) {
         if (!config.reactToNotableKills) return;
         if (client.player == null || killer != client.player) return;
 
