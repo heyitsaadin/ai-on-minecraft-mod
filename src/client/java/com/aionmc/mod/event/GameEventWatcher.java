@@ -39,8 +39,8 @@ public class GameEventWatcher {
         ClientTickEvents.END_CLIENT_TICK.register(this::onTick);
     }
 
-    private void onTick(MinecraftClient client) {
-        ClientPlayerEntity player = client.player;
+    private void onTick(Minecraft client) {
+        LocalPlayer player = client.player;
         if (player == null) return;
 
         tickCounter++;
