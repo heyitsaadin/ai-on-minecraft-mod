@@ -51,7 +51,7 @@ public class GameEventWatcher {
         }
     }
 
-    private void checkLowHealth(ClientPlayerEntity player) {
+    private void checkLowHealth(LocalPlayer player) {
         float fraction = player.getHealth() / player.getMaxHealth();
         boolean isLowNow = fraction <= config.lowHealthThreshold;
 
