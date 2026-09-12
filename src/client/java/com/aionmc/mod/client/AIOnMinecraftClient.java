@@ -53,9 +53,9 @@ public class AIOnMinecraftClient implements ClientModInitializer {
             Minecraft.getInstance().execute(() -> {
                 Minecraft client = Minecraft.getInstance();
                 if (client.player != null) {
-                    client.player.sendSystemMessage(
-                            Component.literal("<AI> " + reply)
-                    );
+                    Component tag = Component.literal("<ChatGpt> ").withStyle(ChatFormatting.BLUE);
+                    Component message = tag.copy().append(Component.literal(reply));
+                    client.player.sendSystemMessage(message);
                 }
             });
         });
