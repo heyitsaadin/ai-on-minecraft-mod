@@ -4,7 +4,10 @@ plugins {
 }
 
 repositories {
-	// Add repositories to retrieve artifacts from in here.
+	maven {
+		name = "shedaniel"
+		url = "https://maven.shedaniel.me/"
+	}
 }
 
 loom {
