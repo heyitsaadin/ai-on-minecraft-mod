@@ -83,6 +83,54 @@ public class AIOnMinecraftClient implements ClientModInitializer {
         });
     }
 
+    /**
+     * Matches the vanilla "has made the advancement [Title]" / "has completed
+     * the challenge [Title]" / "has reached the goal [Title]" announcement
+     * text, capturing just the bracketed title. These are the three
+     * announcement shapes vanilla uses for the three advancement frame
+     * types (task/challenge/goal).
+     */
+    private static final Pattern ADVANCEMENT_ANNOUNCEMENT = Pattern.compile(
+            "has (?:made the advancement|completed the challenge|reached the goal) \\[(.+)]");
+
+    /**
+     * There is no server-side kill event a client-only mod can use (see
+     * GameEventWatcher for the full explanation), so advancement/goal/
+     * challenge announcements and death messages are both picked up here,
+     * from the same client-visible signal: any "game message" the server
+     * broadcasts (death messages, advancement announcements, join/leave,
+     * etc. -- see ClientReceiveMessageEvents.GAME's Javadoc). This is the
+     * same text shown in the chat/system-message log in vanilla.
+     */
+    private void registerGameMessageHook() {
+        ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
+            if (!config.aiEnabled) return;
+
+            Minecraft client = Minecraft.getInstance();
+            if (client.player == null) return;
+
+            String text = message.getString();
+            String playerName = client.player.getGameProfile().getName();
+
+            // Only react to this player's own announcements -- other
+            // players' advancements/deaths on a shared server aren't this
+            // player's own notable moments.
+            if (!text.startsWith(playerName)) {
+                Matcher advancementMatch = ADVANCEMENT_ANNOUNCEMENT.matcher(text);
+                if (text.startsWith(playerName + " ") && advancementMatch.find()) {
+                    eventWatcher.onAdvancementEarned(advancementMatch.group(1));
+                }
+                eventWatcher.onGameMessageReceived(text, playerName);
+                return;
+            }
+
+            Matcher advancementMatch = ADVANCEMENT_ANNOUNCEMENT.matcher(text);
+            if (advancementMatch.find()) {
+                eventWatcher.onAdvancementEarned(advancementMatch.group(1));
+            }
+        });
+    }
+
     private void handleAmbientEvent(String description) {
         if (!config.aiEnabled) {
             return;
