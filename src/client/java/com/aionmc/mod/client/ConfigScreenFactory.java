@@ -143,6 +143,22 @@ public final class ConfigScreenFactory {
                         .setSaveConsumer(value -> config.reactToNotableKills = value)
                         .build());
 
+        ConfigCategory display = builder.getOrCreateCategory(Component.literal("Display"));
+
+        display.addEntry(
+                entryBuilder.startEnumSelector(
+                                Component.literal("Show AI replies"),
+                                ModConfig.DisplayMode.class,
+                                config.displayMode)
+                        .setDefaultValue(ModConfig.DisplayMode.CHAT)
+                        .setTooltip(Component.literal(
+                                "Chat: replies appear as normal chat messages.\n" +
+                                        "Overlay: replies appear as on-screen text in the chosen corner\n" +
+                                        "instead of the chat log."))
+                        .setEnumNameProvider(value -> Component.literal(displayModeName((ModConfig.DisplayMode) value)))
+                        .setSaveConsumer(value -> config.displayMode = value)
+                        .build());
+
         return builder.build();
     }
 
@@ -151,6 +167,15 @@ public final class ConfigScreenFactory {
             case FREE_PROXY -> "Free (built-in)";
             case CUSTOM_OPENAI_COMPATIBLE -> "Custom: OpenAI-compatible";
             case CUSTOM_NVIDIA -> "Custom: NVIDIA NIM";
+        };
+    }
+
+    private static String displayModeName(ModConfig.DisplayMode mode) {
+        return switch (mode) {
+            case CHAT -> "Chat";
+            case OVERLAY_TOP_LEFT -> "Overlay: Top Left";
+            case OVERLAY_TOP_RIGHT -> "Overlay: Top Right";
+            case OVERLAY_BOTTOM_RIGHT -> "Overlay: Bottom Right";
         };
     }
 }
