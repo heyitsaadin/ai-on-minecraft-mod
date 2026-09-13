@@ -40,8 +40,11 @@ dependencies {
 
 	// Mod Menu integration is optional: compile against the API, but don't
 	// require players to have it installed for the mod to work at all.
-	modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
-	modLocalRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
+	// Uses plain compileOnly/runtimeOnly (not modCompileOnly/modLocalRuntime)
+	// since this project's dependencies elsewhere use plain `implementation`,
+	// not Loom's mod* configurations.
+	compileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
+	runtimeOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
 }
 
 processResources {
