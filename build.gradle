@@ -8,6 +8,10 @@ repositories {
 		name = "shedaniel"
 		url = "https://maven.shedaniel.me/"
 	}
+	maven {
+		name = "Terraformers"
+		url = "https://maven.terraformersmc.com/"
+	}
 }
 
 loom {
@@ -33,6 +37,11 @@ dependencies {
 	implementation("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
 		exclude(group: "net.fabricmc.fabric-api")
 	}
+
+	// Mod Menu integration is optional: compile against the API, but don't
+	// require players to have it installed for the mod to work at all.
+	modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
+	modLocalRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
 }
 
 processResources {
