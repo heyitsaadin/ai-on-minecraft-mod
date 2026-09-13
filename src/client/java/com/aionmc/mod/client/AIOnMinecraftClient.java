@@ -57,6 +57,9 @@ public class AIOnMinecraftClient implements ClientModInitializer {
 
     private void registerChatHook() {
         ClientSendMessageEvents.ALLOW_CHAT.register(message -> {
+            if (!config.aiEnabled) {
+                return true;
+            }
             memory.addPlayerMessage(message);
             requestAndDisplayReply();
             return true;
@@ -64,6 +67,9 @@ public class AIOnMinecraftClient implements ClientModInitializer {
     }
 
     private void handleAmbientEvent(String description) {
+        if (!config.aiEnabled) {
+            return;
+        }
         memory.addEvent(description);
         requestAndDisplayReply();
     }
@@ -75,6 +81,11 @@ public class AIOnMinecraftClient implements ClientModInitializer {
             memory.addAssistantMessage(reply);
 
             Minecraft.getInstance().execute(() -> {
+                if (config.displayMode != ModConfig.DisplayMode.CHAT) {
+                    overlayHud.show(reply);
+                    return;
+                }
+
                 Minecraft client = Minecraft.getInstance();
                 if (client.player != null) {
                     // A lighter, brighter blue than the built-in ChatFormatting.BLUE
