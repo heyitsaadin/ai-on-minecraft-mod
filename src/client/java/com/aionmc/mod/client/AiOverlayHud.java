@@ -1,8 +1,8 @@
 package com.aionmc.mod.client;
 
 import com.aionmc.mod.config.ModConfig;
-import net.fabricmc.fabric.api.client.rendering.v1.HudElementRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.VanillaHudElements;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -28,7 +28,7 @@ import java.util.List;
  */
 public final class AiOverlayHud {
 
-    private static final Identifier ELEMENT_ID = Identifier.of("aionminecraft", "ai_reply_overlay");
+    private static final Identifier ELEMENT_ID = Identifier.fromNamespaceAndPath("aionminecraft", "ai_reply_overlay");
 
     private static final int MARGIN = 6;
     private static final int LINE_HEIGHT = 10;
