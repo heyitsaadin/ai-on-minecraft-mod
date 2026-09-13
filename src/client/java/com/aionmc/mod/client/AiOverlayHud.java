@@ -1,12 +1,15 @@
 package com.aionmc.mod.client;
 
 import com.aionmc.mod.config.ModConfig;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.HudElementRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.VanillaHudElements;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.Font;
-import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.FormattedCharSequence;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,14 +18,24 @@ import java.util.List;
  * {@link ModConfig#displayMode} is set to one of the OVERLAY_* options; the
  * text clears itself after a short display window so it doesn't linger
  * forever over gameplay.
+ *
+ * Uses HudElementRegistry rather than the older HudRenderCallback -- the
+ * latter was removed as of Minecraft 26.1 in favor of this registry-based
+ * API. The render callback here takes the plain rendering type used by
+ * this build's GUI drawing API (see ConfigScreenFactory/Cloth Config for
+ * the settings-screen side of things; this class only concerns the HUD
+ * overlay).
  */
 public final class AiOverlayHud {
+
+    private static final Identifier ELEMENT_ID = Identifier.of("aionminecraft", "ai_reply_overlay");
 
     private static final int MARGIN = 6;
     private static final int LINE_HEIGHT = 10;
     private static final int MAX_WIDTH = 220;
-    /** How long a reply stays on screen before fading out, in client ticks (20 ticks = 1s). */
+    /** How long a reply stays on screen before clearing, in client ticks (20 ticks = 1s). */
     private static final int DISPLAY_TICKS = 20 * 12;
+    private static final int TEXT_COLOR = 0xFFFFFFFF; // opaque white (ARGB)
 
     private final ModConfig config;
     private String currentText = null;
@@ -33,7 +46,10 @@ public final class AiOverlayHud {
     }
 
     public void register() {
-        HudRenderCallback.EVENT.register(this::onHudRender);
+        HudElementRegistry.attachElementAfter(
+                VanillaHudElements.CHAT,
+                ELEMENT_ID,
+                this::render);
     }
 
     /** Called whenever a new AI reply arrives, regardless of the current display mode. */
@@ -42,7 +58,7 @@ public final class AiOverlayHud {
         this.ticksRemaining = DISPLAY_TICKS;
     }
 
-    private void onHudRender(GuiGraphics graphics, net.minecraft.client.DeltaTracker deltaTracker) {
+    private void render(net.minecraft.client.gui.GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {
         if (config.displayMode == ModConfig.DisplayMode.CHAT) {
             return;
         }
@@ -53,20 +69,11 @@ public final class AiOverlayHud {
 
         Minecraft client = Minecraft.getInstance();
         Font font = client.font;
-        List<net.minecraft.util.FormattedCharSequence> lines =
-                font.split(Component.literal(currentText), MAX_WIDTH);
+        List<String> lines = wrap(font, currentText, MAX_WIDTH);
 
         int screenWidth = client.getWindow().getGuiScaledWidth();
         int screenHeight = client.getWindow().getGuiScaledHeight();
         int blockHeight = lines.size() * LINE_HEIGHT;
-
-        int x = switch (config.displayMode) {
-            case OVERLAY_TOP_LEFT, OVERLAY_BOTTOM_RIGHT -> MARGIN;
-            case OVERLAY_TOP_RIGHT -> screenWidth - MAX_WIDTH - MARGIN;
-            default -> MARGIN;
-        };
-        // Overlay_top_right and overlay_bottom_right both anchor from the right edge;
-        // recompute x precisely per-line below since line widths vary.
 
         int yStart = switch (config.displayMode) {
             case OVERLAY_TOP_LEFT, OVERLAY_TOP_RIGHT -> MARGIN;
@@ -75,15 +82,39 @@ public final class AiOverlayHud {
         };
 
         int y = yStart;
-        for (net.minecraft.util.FormattedCharSequence line : lines) {
+        for (String line : lines) {
             int lineWidth = font.width(line);
-            int lineX = switch (config.displayMode) {
+            int x = switch (config.displayMode) {
                 case OVERLAY_TOP_LEFT -> MARGIN;
                 case OVERLAY_TOP_RIGHT, OVERLAY_BOTTOM_RIGHT -> screenWidth - lineWidth - MARGIN;
                 default -> MARGIN;
             };
-            graphics.drawString(font, line, lineX, y, 0xFFFFFF, true);
+            graphics.text(font, line, x, y, TEXT_COLOR, true);
             y += LINE_HEIGHT;
         }
+    }
+
+    /**
+     * Minimal word-wrapping using Font#width, since the exact
+     * text-splitting helper name/shape has moved between Minecraft
+     * versions in the past and this only needs to handle plain strings.
+     */
+    private static List<String> wrap(Font font, String text, int maxWidth) {
+        List<String> lines = new ArrayList<>();
+        StringBuilder current = new StringBuilder();
+
+        for (String word : text.split(" ")) {
+            String candidate = current.isEmpty() ? word : current + " " + word;
+            if (font.width(candidate) > maxWidth && !current.isEmpty()) {
+                lines.add(current.toString());
+                current = new StringBuilder(word);
+            } else {
+                current = new StringBuilder(candidate);
+            }
+        }
+        if (!current.isEmpty()) {
+            lines.add(current.toString());
+        }
+        return lines;
     }
 }
