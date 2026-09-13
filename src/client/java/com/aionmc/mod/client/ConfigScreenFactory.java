@@ -153,8 +153,9 @@ public final class ConfigScreenFactory {
                         .setDefaultValue(ModConfig.DisplayMode.CHAT)
                         .setTooltip(Component.literal(
                                 "Chat: replies appear as normal chat messages.\n" +
-                                        "Overlay: replies appear as on-screen text in the chosen corner\n" +
-                                        "instead of the chat log."))
+                                        "Overlay: replies appear as on-screen text in the chosen\n" +
+                                        "corner, or centered above the hotbar for Middle, instead\n" +
+                                        "of the chat log."))
                         .setEnumNameProvider(value -> Component.literal(displayModeName((ModConfig.DisplayMode) value)))
                         .setSaveConsumer(value -> config.displayMode = value)
                         .build());
