@@ -22,7 +22,9 @@ public class ModConfig {
         CHAT,
         OVERLAY_TOP_LEFT,
         OVERLAY_TOP_RIGHT,
-        OVERLAY_BOTTOM_RIGHT
+        OVERLAY_BOTTOM_RIGHT,
+        /** Directly above the hotbar, centered horizontally. */
+        OVERLAY_MIDDLE
     }
 
     /** Master switch. When false, the mod never sends requests to the AI at all. */
