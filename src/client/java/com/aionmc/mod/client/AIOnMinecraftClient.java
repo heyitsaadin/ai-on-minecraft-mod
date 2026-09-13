@@ -110,7 +110,7 @@ public class AIOnMinecraftClient implements ClientModInitializer {
             if (client.player == null) return;
 
             String text = message.getString();
-            String playerName = client.player.getGameProfile().getName();
+            String playerName = client.player.getName().getString();
 
             // Advancement/goal/challenge announcements are always phrased
             // "<name> has made the advancement [...]" for this player's own
