@@ -25,7 +25,7 @@ public final class AionModMenuIntegration implements ModMenuApi {
 
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return parent -> ConfigScreenFactory.build(
+        return parent -> com.aionmc.mod.client.ConfigScreenFactory.build(
                 AIOnMinecraftClient.getInstance().getConfig(), parent);
     }
 }
