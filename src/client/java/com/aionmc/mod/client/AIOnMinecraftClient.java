@@ -42,6 +42,7 @@ public class AIOnMinecraftClient implements ClientModInitializer {
         eventWatcher.register();
         overlayHud.register();
         registerChatHook();
+        registerGameMessageHook();
         registerConfigCommand();
     }
 
