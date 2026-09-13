@@ -19,6 +19,9 @@
 		],
 		"client": [
 			"com.aionmc.mod.client.AIOnMinecraftClient"
+		],
+		"modmenu": [
+			"com.aionmc.mod.client.AionModMenuIntegration"
 		]
 	},
 	"mixins": [
