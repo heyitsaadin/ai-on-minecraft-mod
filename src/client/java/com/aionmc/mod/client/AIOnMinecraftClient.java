@@ -19,6 +19,8 @@ import java.util.List;
 
 public class AIOnMinecraftClient implements ClientModInitializer {
 
+    private static AIOnMinecraftClient instance;
+
     private ChatMemory memory;
     private ModConfig config;
     private AiClient aiClient;
@@ -27,6 +29,7 @@ public class AIOnMinecraftClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        instance = this;
         this.config = ModConfig.loadOrCreate(FabricLoader.getInstance().getConfigDir());
         this.memory = new ChatMemory();
         this.aiClient = new AiClient(config);
@@ -43,6 +46,16 @@ public class AIOnMinecraftClient implements ClientModInitializer {
      * "/aion config" opens the settings screen. We're not depending on Mod
      * Menu here (its exact Minecraft 26.2 version wasn't something we could
      * pin with confidence), so a plain client command is the simple,
+    /**
+     * Fabric Loader only ever constructs one instance of a client mod
+     * initializer, so this is safe as a simple singleton accessor -- used by
+     * AionModMenuIntegration (a separate class, only loaded when Mod Menu is
+     * present) to reach the running config without a second load path.
+     */
+    public static AIOnMinecraftClient getInstance() {
+        return instance;
+    }
+
      * dependency-free way to open it in-game.
      */
     private void registerConfigCommand() {
