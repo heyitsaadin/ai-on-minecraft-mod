@@ -13,11 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Draws the most recent AI reply as plain on-screen text in a corner of the
- * HUD, as an alternative to posting it in chat. Only active while
+ * Draws the most recent AI reply as plain on-screen text in a corner (or,
+ * for OVERLAY_MIDDLE, centered just above the hotbar) of the HUD, as an
+ * alternative to posting it in chat. Only active while
  * {@link ModConfig#displayMode} is set to one of the OVERLAY_* options; the
- * text clears itself after a short display window so it doesn't linger
- * forever over gameplay.
+ * text clears itself after a display window scaled to the reply's length
+ * (see displayTicksFor) so it doesn't linger forever over gameplay, but
+ * also doesn't vanish before a long reply can be read.
  *
  * Uses HudElementRegistry rather than the older HudRenderCallback -- the
  * latter was removed as of Minecraft 26.1 in favor of this registry-based
