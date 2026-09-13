@@ -73,30 +73,56 @@ public class GameEventWatcher {
         wasLowHealth = isLowNow;
     }
 
-    public void onEntityKilled(LivingEntity killed, Entity killer, Minecraft client) {
-        if (!config.reactToNotableKills) return;
-        if (client.player == null || killer != client.player) return;
+    /**
+     * Notable-mob display names, matched against the plain text of a death
+     * message rather than any entity object. There is no server-side kill
+     * event available to a client-only mod (ServerLivingEntityEvents.AFTER_DEATH
+     * and friends only fire on the logical server, which this mod has no
+     * access to on someone else's server); death messages are the standard
+     * client-visible signal instead, delivered the same way in singleplayer
+     * and multiplayer via ClientReceiveMessageEvents.GAME (see
+     * AIOnMinecraftClient.registerGameMessageHook). Vanilla's death-message
+     * text always includes the mob's display name, so a simple substring
+     * match is reliable without needing an entity reference at all.
+     */
+    private static final Set<String> NOTABLE_MOB_NAMES = new HashSet<>(Set.of(
+            "Ender Dragon",
+            "Wither",
+            "Warden",
+            "Elder Guardian"
+    ));
 
-        EntityType<?> type = killed.getType();
-        String id = idOf(type);
-        if (NOTABLE_MOB_IDS.contains(id)) {
-            String name = describeNotableKill(id);
-            onAmbientEvent.accept("The player just defeated " + name + "!");
+    /**
+     * Checks a death-message string (as broadcast by the server and received
+     * verbatim by this client) for a notable-mob name, alongside the
+     * player's own name so we only react to the player's own kills rather
+     * than other players' or mobs' deaths. Matching by containing the
+     * player's name AND a notable mob's name catches both message orders
+     * Minecraft uses (e.g. "Foo was slain by the Wither" for the player
+     * dying, vs. "The Warden was slain by Foo" for the player's kill) --
+     * we only want the latter shape, so we also require the message not
+     * start with the player's own name (which would mean the player died).
+     */
+    public void onGameMessageReceived(String messageText, String playerName) {
+        if (!config.reactToNotableKills) return;
+        if (messageText.startsWith(playerName)) return;
+        if (!messageText.contains(playerName)) return;
+
+        for (String mobName : NOTABLE_MOB_NAMES) {
+            if (messageText.contains(mobName)) {
+                onAmbientEvent.accept("The player just defeated " + describeNotableKill(mobName) + "!");
+                return;
+            }
         }
     }
 
-    private String idOf(EntityType<?> type) {
-        Identifier key = BuiltInRegistries.ENTITY_TYPE.getKey(type);
-        return key == null ? "" : key.toString();
-    }
-
-    private String describeNotableKill(String id) {
-        return switch (id) {
-            case "minecraft:ender_dragon" -> "the Ender Dragon";
-            case "minecraft:wither" -> "the Wither";
-            case "minecraft:warden" -> "a Warden";
-            case "minecraft:elder_guardian" -> "an Elder Guardian";
-            default -> id;
+    private String describeNotableKill(String mobName) {
+        return switch (mobName) {
+            case "Ender Dragon" -> "the Ender Dragon";
+            case "Wither" -> "the Wither";
+            case "Warden" -> "a Warden";
+            case "Elder Guardian" -> "an Elder Guardian";
+            default -> mobName;
         };
     }
 
