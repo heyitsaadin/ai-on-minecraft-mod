@@ -43,10 +43,6 @@ public class AIOnMinecraftClient implements ClientModInitializer {
     }
 
     /**
-     * "/aion config" opens the settings screen. We're not depending on Mod
-     * Menu here (its exact Minecraft 26.2 version wasn't something we could
-     * pin with confidence), so a plain client command is the simple,
-    /**
      * Fabric Loader only ever constructs one instance of a client mod
      * initializer, so this is safe as a simple singleton accessor -- used by
      * AionModMenuIntegration (a separate class, only loaded when Mod Menu is
@@ -56,7 +52,11 @@ public class AIOnMinecraftClient implements ClientModInitializer {
         return instance;
     }
 
-     * dependency-free way to open it in-game.
+    /**
+     * "/aion config" opens the settings screen directly. This stays even now
+     * that Mod Menu is wired up (see AionModMenuIntegration) as a
+     * dependency-free way to reach settings for anyone without Mod Menu
+     * installed.
      */
     private void registerConfigCommand() {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) ->
