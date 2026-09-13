@@ -13,6 +13,25 @@ import java.util.function.Consumer;
 public class GameEventWatcher {
 
     /**
+     * Notable-mob display names, matched against the plain text of a death
+     * message rather than any entity object. There is no server-side kill
+     * event available to a client-only mod (ServerLivingEntityEvents.AFTER_DEATH
+     * and friends only fire on the logical server, which this mod has no
+     * access to on someone else's server); death messages are the standard
+     * client-visible signal instead, delivered the same way in singleplayer
+     * and multiplayer via ClientReceiveMessageEvents.GAME (see
+     * AIOnMinecraftClient.registerGameMessageHook). Vanilla's death-message
+     * text always includes the mob's display name, so a simple substring
+     * match is reliable without needing an entity reference at all.
+     */
+    private static final Set<String> NOTABLE_MOB_NAMES = new HashSet<>(Set.of(
+            "Ender Dragon",
+            "Wither",
+            "Warden",
+            "Elder Guardian"
+    ));
+
+    private final ChatMemory memory;
     private final ModConfig config;
     private final Consumer<String> onAmbientEvent;
 
@@ -52,25 +71,6 @@ public class GameEventWatcher {
         }
         wasLowHealth = isLowNow;
     }
-
-    /**
-     * Notable-mob display names, matched against the plain text of a death
-     * message rather than any entity object. There is no server-side kill
-     * event available to a client-only mod (ServerLivingEntityEvents.AFTER_DEATH
-     * and friends only fire on the logical server, which this mod has no
-     * access to on someone else's server); death messages are the standard
-     * client-visible signal instead, delivered the same way in singleplayer
-     * and multiplayer via ClientReceiveMessageEvents.GAME (see
-     * AIOnMinecraftClient.registerGameMessageHook). Vanilla's death-message
-     * text always includes the mob's display name, so a simple substring
-     * match is reliable without needing an entity reference at all.
-     */
-    private static final Set<String> NOTABLE_MOB_NAMES = new HashSet<>(Set.of(
-            "Ender Dragon",
-            "Wither",
-            "Warden",
-            "Elder Guardian"
-    ));
 
     /**
      * Checks a death-message string (as broadcast by the server and received
