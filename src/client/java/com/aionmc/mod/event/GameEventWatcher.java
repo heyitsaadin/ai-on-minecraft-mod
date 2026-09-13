@@ -5,11 +5,6 @@ import com.aionmc.mod.memory.ChatMemory;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,21 +13,6 @@ import java.util.function.Consumer;
 public class GameEventWatcher {
 
     /**
-     * Notable-mob ids as strings rather than EntityType.XYZ static constants.
-     * The static constants on EntityType weren't resolving against this
-     * build's Minecraft 26.2 setup (Fabric Loom's non-remapping mode for
-     * 26.x doesn't expose them the way older, remapped versions did), so we
-     * look the type up by its stable resource-location id instead, which
-     * works the same way across mapping/remapping configurations.
-     */
-    private static final Set<String> NOTABLE_MOB_IDS = new HashSet<>(Set.of(
-            "minecraft:ender_dragon",
-            "minecraft:wither",
-            "minecraft:warden",
-            "minecraft:elder_guardian"
-    ));
-
-    private final ChatMemory memory;
     private final ModConfig config;
     private final Consumer<String> onAmbientEvent;
 
