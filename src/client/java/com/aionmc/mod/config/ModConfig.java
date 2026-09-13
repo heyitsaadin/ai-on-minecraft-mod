@@ -18,6 +18,28 @@ public class ModConfig {
         CUSTOM_NVIDIA
     }
 
+    public enum DisplayMode {
+        CHAT,
+        OVERLAY_TOP_LEFT,
+        OVERLAY_TOP_RIGHT,
+        OVERLAY_BOTTOM_RIGHT
+    }
+
+    /** Master switch. When false, the mod never sends requests to the AI at all. */
+    public boolean aiEnabled = true;
+
+    /**
+     * Whether the player wants to use their own API key rather than the free
+     * built-in proxy. Purely a UX flag for the settings screen -- the actual
+     * request path is still decided by {@link #provider}, but this gives
+     * players an explicit, clearly-labeled toggle instead of relying on them
+     * to understand that switching "provider" is what turns key usage on.
+     */
+    public boolean useOwnApiKey = false;
+
+    /** Where AI replies are shown: in chat, or as an on-screen overlay in a given corner. */
+    public DisplayMode displayMode = DisplayMode.CHAT;
+
     public Provider provider = Provider.FREE_PROXY;
 
     public String customApiKey = "";
