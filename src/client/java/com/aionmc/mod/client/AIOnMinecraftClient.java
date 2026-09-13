@@ -112,22 +112,21 @@ public class AIOnMinecraftClient implements ClientModInitializer {
             String text = message.getString();
             String playerName = client.player.getGameProfile().getName();
 
-            // Only react to this player's own announcements -- other
-            // players' advancements/deaths on a shared server aren't this
-            // player's own notable moments.
-            if (!text.startsWith(playerName)) {
+            // Advancement/goal/challenge announcements are always phrased
+            // "<name> has made the advancement [...]" for this player's own
+            // announcements -- only react to those, not other players'.
+            if (text.startsWith(playerName + " ")) {
                 Matcher advancementMatch = ADVANCEMENT_ANNOUNCEMENT.matcher(text);
-                if (text.startsWith(playerName + " ") && advancementMatch.find()) {
+                if (advancementMatch.find()) {
                     eventWatcher.onAdvancementEarned(advancementMatch.group(1));
                 }
-                eventWatcher.onGameMessageReceived(text, playerName);
-                return;
             }
 
-            Matcher advancementMatch = ADVANCEMENT_ANNOUNCEMENT.matcher(text);
-            if (advancementMatch.find()) {
-                eventWatcher.onAdvancementEarned(advancementMatch.group(1));
-            }
+            // Death messages come in either order ("Foo was slain by the
+            // Wither" or "The Warden was slain by Foo") -- onGameMessageReceived
+            // handles telling those apart and only reacts to the player's own
+            // kills, so every game message is forwarded here unconditionally.
+            eventWatcher.onGameMessageReceived(text, playerName);
         });
     }
 
