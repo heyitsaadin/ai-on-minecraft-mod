@@ -66,8 +66,8 @@ public final class AiOverlayHud {
 
     /** Called whenever a new AI reply arrives, regardless of the current display mode. */
     public void show(String text) {
+        this.currentText = text;
         this.ticksRemaining = displayTicksFor(text);
-        this.ticksRemaining = DISPLAY_TICKS;
     }
 
     private void render(net.minecraft.client.gui.GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {
