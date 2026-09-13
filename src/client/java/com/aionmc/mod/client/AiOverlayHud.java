@@ -33,8 +33,18 @@ public final class AiOverlayHud {
     private static final int MARGIN = 6;
     private static final int LINE_HEIGHT = 10;
     private static final int MAX_WIDTH = 220;
-    /** How long a reply stays on screen before clearing, in client ticks (20 ticks = 1s). */
-    private static final int DISPLAY_TICKS = 20 * 12;
+    /** Height of the hotbar + its margin from the bottom of the screen, in GUI-scaled pixels. */
+    private static final int HOTBAR_CLEARANCE = 60;
+
+    /**
+     * Display duration scales with message length so a long reply doesn't
+     * vanish before it can be read: a flat base time, plus a small amount
+     * per character, clamped to a sane range. All in client ticks (20 ticks
+     * = 1 real second).
+     */
+    private static final int BASE_DISPLAY_TICKS = 20 * 6;
+    private static final double TICKS_PER_CHARACTER = 0.75;
+    private static final int MAX_DISPLAY_TICKS = 20 * 45;
     private static final int TEXT_COLOR = 0xFFFFFFFF; // opaque white (ARGB)
 
     private final ModConfig config;
@@ -54,7 +64,7 @@ public final class AiOverlayHud {
 
     /** Called whenever a new AI reply arrives, regardless of the current display mode. */
     public void show(String text) {
-        this.currentText = text;
+        this.ticksRemaining = displayTicksFor(text);
         this.ticksRemaining = DISPLAY_TICKS;
     }
 
@@ -77,6 +87,7 @@ public final class AiOverlayHud {
 
         int yStart = switch (config.displayMode) {
             case OVERLAY_TOP_LEFT, OVERLAY_TOP_RIGHT -> MARGIN;
+            case OVERLAY_MIDDLE -> screenHeight - HOTBAR_CLEARANCE - blockHeight;
             case OVERLAY_BOTTOM_RIGHT -> screenHeight - blockHeight - MARGIN;
             default -> MARGIN;
         };
@@ -86,6 +97,7 @@ public final class AiOverlayHud {
             int lineWidth = font.width(line);
             int x = switch (config.displayMode) {
                 case OVERLAY_TOP_LEFT -> MARGIN;
+                case OVERLAY_MIDDLE -> (screenWidth - lineWidth) / 2;
                 case OVERLAY_TOP_RIGHT, OVERLAY_BOTTOM_RIGHT -> screenWidth - lineWidth - MARGIN;
                 default -> MARGIN;
             };
@@ -93,6 +105,16 @@ public final class AiOverlayHud {
             y += LINE_HEIGHT;
         }
     }
+    /**
+     * Base time plus a small amount per character, so a one-line reply and
+     * a multi-paragraph one don't get the same fixed window -- capped so an
+     * extremely long reply doesn't sit on screen indefinitely.
+     */
+    private static int displayTicksFor(String text) {
+        int scaled = BASE_DISPLAY_TICKS + (int) Math.round(text.length() * TICKS_PER_CHARACTER);
+        return Math.min(scaled, MAX_DISPLAY_TICKS);
+    }
+
 
     /**
      * Minimal word-wrapping using Font#width, since the exact
