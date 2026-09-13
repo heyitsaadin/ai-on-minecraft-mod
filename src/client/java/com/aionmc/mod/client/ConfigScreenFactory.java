@@ -176,6 +176,7 @@ public final class ConfigScreenFactory {
             case OVERLAY_TOP_LEFT -> "Overlay: Top Left";
             case OVERLAY_TOP_RIGHT -> "Overlay: Top Right";
             case OVERLAY_BOTTOM_RIGHT -> "Overlay: Bottom Right";
+            case OVERLAY_MIDDLE -> "Overlay: Middle";
         };
     }
 }
