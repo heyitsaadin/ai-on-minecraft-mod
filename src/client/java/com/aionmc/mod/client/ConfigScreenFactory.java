@@ -56,6 +56,25 @@ public final class ConfigScreenFactory {
         ConfigCategory general = builder.getOrCreateCategory(Component.literal("General"));
 
         general.addEntry(
+                entryBuilder.startBooleanToggle(Component.literal("Enable AI"), config.aiEnabled)
+                        .setDefaultValue(true)
+                        .setTooltip(Component.literal(
+                                "Master switch. Turn off to stop the mod from contacting the AI\n" +
+                                        "entirely -- no chat replies, no ambient event reactions."))
+                        .setSaveConsumer(value -> config.aiEnabled = value)
+                        .build());
+
+        general.addEntry(
+                entryBuilder.startBooleanToggle(Component.literal("Use my own API key"), config.useOwnApiKey)
+                        .setDefaultValue(false)
+                        .setTooltip(Component.literal(
+                                "Off: use the free built-in proxy, no key needed.\n" +
+                                        "On: switch the provider below to a Custom option and enter\n" +
+                                        "your own endpoint, model, and API key."))
+                        .setSaveConsumer(value -> config.useOwnApiKey = value)
+                        .build());
+
+        general.addEntry(
                 entryBuilder.startEnumSelector(
                                 Component.literal("AI provider"),
                                 ModConfig.Provider.class,
