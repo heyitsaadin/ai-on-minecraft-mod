@@ -23,6 +23,7 @@ public class AIOnMinecraftClient implements ClientModInitializer {
     private ModConfig config;
     private AiClient aiClient;
     private GameEventWatcher eventWatcher;
+    private AiOverlayHud overlayHud;
 
     @Override
     public void onInitializeClient() {
@@ -30,8 +31,10 @@ public class AIOnMinecraftClient implements ClientModInitializer {
         this.memory = new ChatMemory();
         this.aiClient = new AiClient(config);
         this.eventWatcher = new GameEventWatcher(memory, config, this::handleAmbientEvent);
+        this.overlayHud = new AiOverlayHud(config);
 
         eventWatcher.register();
+        overlayHud.register();
         registerChatHook();
         registerConfigCommand();
     }
